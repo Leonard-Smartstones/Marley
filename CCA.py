@@ -15,6 +15,21 @@ class CcaExtraction():
         self.reference_signals = None
         
     def getReferenceSignals(self, length, target_freqs):
+        """ Generate and set the pure frequency templates
+            
+        Parameters
+        ----------
+        length : 
+            length of template in samples
+        target_freqs : 
+            list of frequencies at which we detect SSVEP
+        
+        Returns
+        -------
+        self.reference_signals : 
+            3D array of shape (n_frequencies, 6, length)
+        
+        """   
         reference_signals = []
         t = np.arange(0, length, step=1.0)/self.headset_freq
         self.harmonics = [self.harmonic_coeff]*len(target_freqs)
@@ -32,38 +47,51 @@ class CcaExtraction():
         corr = np.corrcoef(res_x.T, res_y.T)[0][1]
         return corr
 
-    def getReferenceSignal(self, target_reference, length):
-        if self.short_signal:
-            return np.array([target_reference[j][:length] for j in range(len(target_reference))])
-        else:
-            return np.array(target_reference)
-
     def getResults(self, sample, frequencies=None):
         if frequencies:         # if frequencies are provided, get reference signals
             self.getReferenceSignals(len(sample), frequencies)
         return [self.getCorr(sample, signal.T) for signal in self.reference_signals]
-    '''def getResults(self, coordinates, length, target_freqs):
-        return ((freq, self.getCorr(coordinates, self.getReferenceSignal(reference, length).T)) for freq, reference in zip(target_freqs, self.reference_signals))
-        '''
-    def getWindowResults(self,sample_ep, frequencies, corr_freq,template=None, add=False):
+
+    def getWindowResults(self,sample_ep, frequencies, corr_freq, noise_template=None, add=False):
+        """ Compute the accuracy of SSVEP detection using CCA
+            
+        Parameters
+        ----------
+        sample_ep : 
+            3D array with shape (n_windows, n_channels, n_samples)
+        frequencies : 
+            list of frequencies at which we detect SSVEP
+        corr_freq : 
+            known SSVEP frequency of sample
+        template : 
+            noise template to add to CCA template
+        add :
+            whether or not to sum the harmonics in the original template
+        
+        Returns
+        -------
+        predictions :
+            list of length n_frequencies containing proportion of windows predicted of certain frequency
+        accuracy :
+            decimal representing accuracy of SSVEP
+        all_results:
+            2D array with shape (n_windows, n_frequencies) containing CCA output
+        
+        """   
         self.getReferenceSignals(sample_ep.shape[-1], frequencies)
-        ten = self.reference_signals[1,0]
-        '''for sig in self.reference_signals[:,0]:
-            sig += ten/2
-        ten = self.reference_signals[1,1]
-        for sig in self.reference_signals[:,1]:
-            sig += ten/2'''
         if add:
             self.reference_signals = np.concatenate(
                                                     (np.sum(self.reference_signals[:,::2], axis=1,keepdims=True), 
                                                     np.sum(self.reference_signals[:,1::2], axis=1,keepdims=True)), axis=1)
-        if template is not None:
+        # add noise template to template if requested
+        if noise_template is not None:
             for i, ref in enumerate(self.reference_signals):
-                self.reference_signals[i] = np.array([temp + template for temp in ref])
-            #self.reference_signals = np.array([np.vstack((freq,template)) for freq in self.reference_signals])
+                self.reference_signals[i] = np.array([temp + noise_template for temp in ref])
         right, wrong = 0,0
         all_results = []
         predictions = np.zeros(np.array(frequencies).shape)
+        
+        # compute CCA for each window
         for window in sample_ep:
             results = self.getResults(window.T)
             all_results.append(results)
@@ -77,6 +105,4 @@ class CcaExtraction():
         print(np.mean(all_results, axis=0))
         print(right+wrong)
         return list(predictions/(right+wrong)), right/(right + wrong), all_results
-    def getRanking(self, results):
-        return sorted(results, key=lambda x: x[1], reverse=True)
         

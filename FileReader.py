@@ -132,6 +132,7 @@ class FileReader():
                 if case =='BaselineS2':
                     return path + 'OpenBCI-RAW-2018-04-08_14-02-30.txt'
         if trial == 7:  #Wenya dry electrodes 
+            path = 'Data/openbci/wenya_trial/'
             if case == 'Baseline':
                 return path + 'OpenBCI-RAW-2018-04-17_17-11-59.txt'
             if case == 'Baseline2':
@@ -207,6 +208,27 @@ class FileReader():
             if case == 'BaselineEnd3':
                 return '20180409172747_Patient01.easy'
     def get_data(self, HEADSET, filter_, notch=True, highpass=True,bandpass=True, cutoff=0,limit=None, corr_freq=0, plot=False, trial=1,session=1):
+        """ Load and preprocess data from single file
+            
+        Parameters
+        ----------
+        HEADSET : 
+            string name of headset
+        filter_ :
+            whether or not to filter
+        cutoff : 
+            amount of samples to remove from beginning and end of sample
+        limit : 
+            maximum size of sample
+        trial :
+            which set to load
+        
+        Returns
+        -------
+        sample :
+            2D array of shape (n_channels, n_samples)
+        
+        """
         if HEADSET == 'AVI':
             self.headset_frequency = 512
             data = np.loadtxt('../BCI/AVI_SSVEP_Dataset_CSV/single/Sub1_singletarget_EEG.dat',delimiter=',', dtype=float)
@@ -215,7 +237,7 @@ class FileReader():
             corr_freq = dic[n]
             sample = data[:, n:n+3].T # 10 hz
             print(sample.shape)
-        elif HEADSET == 'WD':
+        elif HEADSET == 'wd':
             self.headset_frequency = 300
             if trial == 1:
                 path = 'Data/wearable_demo_trial1/'
@@ -243,7 +265,7 @@ class FileReader():
             raw = mne.io.read_raw_edf(path + fname,preload=True)
             data, time = raw[:]
             sample = np.array(data[[14,15]])
-        elif HEADSET == 'OBCI':
+        elif HEADSET == 'openbci':
             self.headset_frequency = 250
             fname = self.get_filename(corr_freq, trial, session=session)
                 
@@ -252,7 +274,7 @@ class FileReader():
                       skiprows=7,
                       usecols=(1,2)).T
             sample = sample[[0]]
-        elif HEADSET == 'Enobio':
+        elif HEADSET == 'enobio':
             self.headset_frequency = 500
             #path = 'C:/Users/Christopher/Marley/BCI/eeglab/SSVEP_Data/'
             #fname = 'Liviu' + str(corr_freq) + '.easy'
@@ -260,7 +282,7 @@ class FileReader():
             fname = self.get_enobio_fname(corr_freq, session=session)
             data = np.loadtxt(path + fname).T
             sample = data[0:2]
-        elif HEADSET == 'Biosemi':
+        elif HEADSET == 'biosemi':
             path = 'C:/Users/Christopher/Marley/BCI/eeglab/SSVEP_Data/'
             fname = 'Liviu' + str(corr_freq) + '.bdf'
             #if corr_freq = 6.66:
@@ -269,7 +291,7 @@ class FileReader():
             data, time = raw[:]
             sample = np.array(data[[26,27,29]])
             self.headset_frequency= 2048
-        elif HEADSET == 'Epoc':
+        elif HEADSET == 'epoc':
             path = 'Data/epoc/'
             if corr_freq == 6.66:
                 fname = 'marley-6.6-15.03.18.13.43.19.edf'
@@ -289,7 +311,7 @@ class FileReader():
             if bandpass:
                 sample = self.bandpass_channels(sample, 1, 50, 5)
                 '''
-        sample = sample[:,self.headset_frequency*cutoff:-self.headset_frequency*cutoff]
+        sample = sample[:,self.headset_frequency*cutoff:sample.shape[-1] - self.headset_frequency*cutoff]
         if limit is not None:
             sample = sample[:,:limit]
         if plot:    

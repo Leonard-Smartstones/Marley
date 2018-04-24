@@ -14,7 +14,6 @@ from CCA import CcaExtraction
 from SNR import SNR
 from Benchmark import Benchmark
 from FileReader import FileReader
-import csv
 import itertools
 import sys
 import sklearn.preprocessing
@@ -62,7 +61,7 @@ def epoch_data(data, window_length, offset):
     arr = []
     i = 0
     while i + window_length < data.shape[-1]:
-        arr.append(data[:,i:i+window_length])
+        arr.append(data.T[i:i+window_length].T)
         i += offset
     return np.array(arr)
     
@@ -89,10 +88,6 @@ def draw_specgram(ch, fs_Hz):
     plt.ylabel('Frequency (Hz)')
     plt.show()
     
-def write_csv(name, obj):
-    with open(name, "w") as f:
-        writer = csv.writer(f)
-        writer.writerows(obj)
 
 def plot_confusion_matrix(cm, corr_frequencies, frequencies, title='Confusion matrix', cmap = plt.cm.Greys):
     plt.matshow(cm, cmap=cmap) # imshow
@@ -110,12 +105,19 @@ def plot_confusion_matrix(cm, corr_frequencies, frequencies, title='Confusion ma
     #plt.tight_layout()
     plt.ylabel("actual")
     plt.xlabel("predicted")
-def plot_cumulative_accuracy(all_resu, frequencies):
+def plot_cumulative_accuracies(arr, frequencies):
+    if arr.ndim > 3:
+        for i in range (0, arr.shape[2]):
+            plot_cumulative_accuracy(arr[:,:,i], frequencies)
+    else:
+        plot_cumulative_accuracy(arr, frequencies)
+        
+def plot_cumulative_accuracy(outputs, frequencies):
     plt.figure()
     plt.ylim(0,1.1)
-    for corr_freq, result in zip(frequencies, all_resu):
+    for corr_freq, output in zip(frequencies, outputs):
         idx = frequencies.index(corr_freq)
-        pred = np.argmax(np.squeeze(result), axis = -1)
+        pred = np.argmax(np.squeeze(output), axis = -1)
         num_corr = 0
         num = 0
         arr = []
@@ -127,64 +129,69 @@ def plot_cumulative_accuracy(all_resu, frequencies):
         plt.plot(arr, label=corr_freq)
     plt.legend()
     
+def plot_acc_by_window_len(window_lengths, arr):
+    plt.figure()
+    plt.ylim(0,1.1)
+    for acc in arr:
+        plt.plot(window_lengths, acc)
     
-    
-HEADSET = 'WD'
+fs_dict = {'openbci': 250, 'enobio': 500, 'wd': 300, 'epoc':128, 'biosemi':2048}
+HEADSET = 'openbci'
 filter_ =1
 highpass = 0
 notch = 1
 bandpass=1
 plot_flag = 1
-#frequencies = [7.5,10, 12]
-frequencies = [8,10,12]
-#frequencies = [6.66, 7.5, 10]
-corr_frequencies = frequencies
-#corr_frequencies = [12,12,12]
+trial = 7
+#corr_frequencies = [7.5,10, 12]
+#corr_frequencies = [6.66, 7.5, 10]
+corr_frequencies = [8,10,12]
+frequencies = corr_frequencies
 window_lengths = [4]
-all_predictions = []
-all_acc = []
-all_results = []
 recording_length = 30
+pred_interval = 0.5
 
 
+fs = fs_dict[HEADSET]
+classifier = Benchmark(fs)
+pred_interval = int(fs * pred_interval)
+
+# Load data from files
+data = {}
 fio = FileReader()
-sampleb = fio.get_data(HEADSET, filter_, cutoff=5, notch=notch, highpass=highpass,bandpass=bandpass, corr_freq='Baseline', session=1)
-fs = fio.headset_frequency
-window_length = 4*fs
-pred_interval = int(fs/2)
-sampleb = sampleb[[0]]
-av = epoch_data(sampleb, window_length, pred_interval)
-#template = av[0,0]
-template = get_template(av[:,0,:],scale=False,amp=True, plot_flag=plot_flag)/2
-template = None
-plt.figure()
-#plot_average_psd(sampleb, window_length, pred_interval)
-classifier = CcaExtraction(fs)
-curr = [['Filename','Filter','Window Length','Prediction Frequencies','Proportion Predicted','Accuracy']]
+baseline = fio.get_data(HEADSET, filter_, cutoff=1, notch=notch, highpass=highpass,bandpass=bandpass, corr_freq='Baseline', trial=trial, session=1)
+data['Baseline'] = baseline
 for corr_freq in corr_frequencies:
-    sample = fio.get_data(HEADSET, filter_, cutoff=1, limit=recording_length*fs,notch=notch, highpass=highpass, bandpass=bandpass,corr_freq=corr_freq,session=1)
-    accuracies = []
-    for num in window_lengths:
-        window_length = int(fs * num)
-        pred_interval = int(fs/2)
-        #plot_average_psd(sample, window_length, pred_interval)
-        sample_ep = epoch_data(sample, window_length, pred_interval)
-        predictions, acc, result = classifier.getWindowResults(sample_ep, frequencies, corr_freq)
-        all_results.append(result)
-        accuracies.append(acc)
-        all_predictions.append(predictions)
-        #print(a.getResults(sample.T, frequencies=frequencies))
-        
-        #result = [filter_, str(window_length/fs) + ' sec', frequencies, predictions, acc]
-        #print(result)
-    all_acc.append(accuracies)
-    curr.append(result)
-plot_confusion_matrix(np.array(all_predictions),corr_frequencies, frequencies)
-#plot_cumulative_accuracy(all_results, corr_frequencies)
-#plt.plot(av)
-#plt.figure()
-#plt.plot(a.reference_signals[0,0])
-if len(window_lengths) > 1:
+    sample = fio.get_data(HEADSET, filter_, cutoff=1, limit=recording_length*fs,notch=notch, highpass=highpass, bandpass=bandpass,corr_freq=corr_freq,trial=trial, session=1)
+    data[corr_freq] = sample
+
+# Plot averaged psd for each channel, for each frequency
+for ch_idx in range (0, len(sample)):
     plt.figure()
-    for acc in all_acc:
-        plt.plot(window_lengths, acc)
+    for sample in data.values():
+        plot_average_psd(sample[ch_idx], int(4 * fs), pred_interval)
+
+# Compute predictions and prediction accuracy for each window length, for each data sample
+acc_by_window_len  = []
+for window_length in window_lengths:
+    window_size = int(fs * window_length)
+    accuracies_set = []
+    output_set = []
+    prediction_set = []
+    av = epoch_data(baseline[[0]], window_size, pred_interval)
+    template = get_template(av[:,0,:],scale=False,amp=True, plot_flag=plot_flag)/2
+    for corr_freq in corr_frequencies:        
+        sample = data[corr_freq]
+        sample_ep = epoch_data(sample, window_size, pred_interval)
+        predictions, acc, outputs = classifier.getWindowResults(sample_ep, frequencies, corr_freq)
+        prediction_set.append(predictions)
+        accuracies_set.append(acc)
+        output_set.append(outputs)
+        
+    acc_by_window_len.append(accuracies_set)
+
+if plot_flag:
+    plot_confusion_matrix(np.array(prediction_set),corr_frequencies, frequencies)
+    plot_cumulative_accuracies(np.array(output_set), corr_frequencies)
+    if len(window_lengths) > 1:
+        plot_acc_by_window_len(window_lengths, acc_by_window_len)

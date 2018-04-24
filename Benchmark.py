@@ -21,6 +21,27 @@ class Benchmark():
         return [filt.predict_proba(window) for filt in self.filters]
     
     def getWindowResults(self, sample_ep, frequencies, corr_freq):
+        """ Compute the accuracy of SSVEP detection using amplitude of FFT
+            
+        Parameters
+        ----------
+        sample_ep : 
+            3D array with shape (n_windows, n_channels, n_samples)
+        frequencies : 
+            list of frequencies at which we detect SSVEP
+        corr_freq : 
+            known SSVEP frequency of sample
+        
+        Returns
+        -------
+        predictions :
+            list of length n_frequencies containing proportion of windows predicted of certain frequency
+        accuracy :
+            decimal representing accuracy of SSVEP
+        all_results:
+            2D array with shape (n_windows, n_frequencies) containing Z-score of amplitude
+        
+        """
         right, wrong = 0,0
         all_results = []
         self.filters = [Filterer(filter_width=0.5,
