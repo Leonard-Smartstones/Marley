@@ -10,17 +10,10 @@ import matplotlib.pyplot as plt
 import mne
 
 class FileReader():
-    '''
-    def bandpass_channels(self, arr, lowcut,highcut,order):
-        nyq = 0.5 * self.fs
-        b, a = signal.butter(order, [lowcut/nyq, highcut/nyq], btype='band')
-        arr = signal.lfilter(b, a, arr, axis=-1)
-        return arr
-        '''
     def bandpass(self,data,start,stop):
         bp_Hz = np.zeros(0)
         bp_Hz = np.array([start,stop])
-        b, a = signal.butter(3, bp_Hz/(self.fs / 2.0),'bandpass')
+        b, a = signal.butter(3, bp_Hz/(self.headset_frequency / 2.0),'bandpass')
         print("Bandpass filtering to: " + str(bp_Hz[0]) + "-" + str(bp_Hz[1]) + " Hz")
         return signal.lfilter(b, a, data, 0)
     def filter_channel(self, ch,notch,highpass,bandpass, fs_Hz):
@@ -47,7 +40,7 @@ class FileReader():
             ndata.append(y)
         return np.array(ndata)
         
-    def get_filename(self, case, trial=7, session=1):
+    def get_filename(self, case, trial, session=1):
         path = 'C:/Users/Christopher/Marley/BCI/OpenBCI_GUI/OpenBCI_GUI/SavedData/'
         path2 = 'C:/Users/Christopher/Marley/OpenBCI/OpenBCI_GUI/SavedData/'
         if trial == 3:
@@ -138,7 +131,7 @@ class FileReader():
                     return path + 'OpenBCI-RAW-2018-04-08_13-45-47.txt' #separate baseline
                 if case =='BaselineS2':
                     return path + 'OpenBCI-RAW-2018-04-08_14-02-30.txt'
-        if trial == 7:
+        if trial == 7:  #Wenya dry electrodes 
             if case == 'Baseline':
                 return path + 'OpenBCI-RAW-2018-04-17_17-11-59.txt'
             if case == 'Baseline2':
@@ -148,15 +141,21 @@ class FileReader():
             if case == 10:
                 return path + 'OpenBCI-RAW-2018-04-17_17-17-39.txt'
             if case == 12:
-                return path + 'OpenBCI-RAW-2018-04-17_20-58-19.txt'
-                #return path + 'OpenBCI-RAW-2018-04-17_20-59-46.txt'
-                #return path + 'OpenBCI-RAW-2018-04-17_21-01-10.txt'
-                #return path + 'OpenBCI-RAW-2018-04-17_17-43-51.txt'
-                #return path + 'OpenBCI-RAW-2018-04-17_17-41-31.txt'
-                #return path + 'OpenBCI-RAW-2018-04-17_17-42-28.txt'
-                #return path + 'OpenBCI-RAW-2018-04-17_17-19-49.txt'
+                return path + 'OpenBCI-RAW-2018-04-17_17-19-49.txt'
             if case == 'BaselineEnd':
                 return path + 'OpenBCI-RAW-2018-04-17_17-21-25.txt'
+        if trial == 8:
+            if case == 'Baseline':
+                return path + 'OpenBCI-RAW-2018-04-17_17-43-51.txt'
+            if case == 12:
+                return path + 'OpenBCI-RAW-2018-04-17_17-41-31.txt'
+                #return path + 'OpenBCI-RAW-2018-04-17_17-42-28.txt'
+        if trial == 9:
+            if case == 'Baseline':
+                return path + 'OpenBCI-RAW-2018-04-17_20-58-19.txt' #baseline
+            if case == 12:
+                return path + 'OpenBCI-RAW-2018-04-17_20-59-46.txt'
+                #return path + 'OpenBCI-RAW-2018-04-17_21-01-10.txt'
         elif case == 7.51:
             return path + 'OpenBCI-RAW-2018-03-08_22-20-12.txt' #7.5 Marley
         elif case == 3:
@@ -165,6 +164,8 @@ class FileReader():
             return path2 + 'OpenBCI-RAW-2018-03-11_22-41-42.txt'
         elif case == 'Baseline':
             return 'C:/Users/Christopher/Marley/OpenBCI/OpenBCI_GUI/SavedData/OpenBCI-RAW-2018-03-12_11-37-33.txt'
+        else:
+            print('File not found')
             
     def get_enobio_fname(self, case, trial=2,session=1):
         if trial ==1:
@@ -205,43 +206,60 @@ class FileReader():
                 return '20180409172703_Patient01.easy'
             if case == 'BaselineEnd3':
                 return '20180409172747_Patient01.easy'
-    def get_data(self, HEADSET, filter_, notch=True, highpass=True,bandpass=True, cutoff=5,limit=None, corr_freq=0, plot=False, session=1):
+    def get_data(self, HEADSET, filter_, notch=True, highpass=True,bandpass=True, cutoff=0,limit=None, corr_freq=0, plot=False, trial=1,session=1):
         if HEADSET == 'AVI':
-            self.fs = 512
+            self.headset_frequency = 512
             data = np.loadtxt('../BCI/AVI_SSVEP_Dataset_CSV/single/Sub1_singletarget_EEG.dat',delimiter=',', dtype=float)
             n = 3
             dic = [10,10,10,12,12,12,6.5,6.5,6.5,6,6,6,6,6,6,7.5,7.5,7.5,7,7,7,8.2,8.2,8.2,9.3,9.3,9.3]
             corr_freq = dic[n]
             sample = data[:, n:n+3].T # 10 hz
             print(sample.shape)
+        elif HEADSET == 'WD':
+            self.headset_frequency = 300
+            if trial == 1:
+                path = 'Data/wearable_demo_trial1/'
+            elif trial == 2:
+                path = 'Data/wearable_demo_trial2/'
+            '''
+            if corr_freq == 8:
+                fname = 'Marley_01_filtered.edf'
+            if corr_freq == 12:
+                fname = 'Marley_02_filtered.edf'
+            if corr_freq == 10:
+                fname = 'Marley_03_filtered.edf'
+            if corr_freq == 'Baseline':
+                fname = 'Marley_04_baseline_filtered.edf'
+            '''
+            
+            if corr_freq == 8:
+                fname = 'Marley_01_raw.edf'
+            if corr_freq == 12:
+                fname = 'Marley_02_raw.edf'
+            if corr_freq == 10:
+                fname = 'Marley_03_raw.edf'
+            if corr_freq == 'Baseline':
+                fname = 'Marley_04_baseline_raw.edf'
+            raw = mne.io.read_raw_edf(path + fname,preload=True)
+            data, time = raw[:]
+            sample = np.array(data[[14,15]])
         elif HEADSET == 'OBCI':
-            self.fs = 250
-            fname = self.get_filename(corr_freq, session=session)
+            self.headset_frequency = 250
+            fname = self.get_filename(corr_freq, trial, session=session)
                 
-            # load data into numpy array
-            #data = np.loadtxt(fname,
-            #                  delimiter=',',).T
             sample = np.loadtxt(fname,
                       delimiter=',',
                       skiprows=7,
                       usecols=(1,2)).T
-            
-            '''draw_specgram(data[0])
-            draw_specgram(bdata[0])
-            draw_specgram(ndata[0])
-            '''
-            #data = signal.detrend(data.T).T
-            #sample = data[:LENGTH]
-            #sample = ch.T[:LENGTH]
-            #plt.plot(sample[:,0])
+            sample = sample[[0]]
         elif HEADSET == 'Enobio':
+            self.headset_frequency = 500
             #path = 'C:/Users/Christopher/Marley/BCI/eeglab/SSVEP_Data/'
             #fname = 'Liviu' + str(corr_freq) + '.easy'
             path = 'C:/Users/Christopher/Documents/NIC/'
             fname = self.get_enobio_fname(corr_freq, session=session)
             data = np.loadtxt(path + fname).T
             sample = data[0:2]
-            self.fs = 500
         elif HEADSET == 'Biosemi':
             path = 'C:/Users/Christopher/Marley/BCI/eeglab/SSVEP_Data/'
             fname = 'Liviu' + str(corr_freq) + '.bdf'
@@ -250,28 +268,28 @@ class FileReader():
             raw = mne.io.read_raw_edf(path + fname)
             data, time = raw[:]
             sample = np.array(data[[26,27,29]])
-            self.fs= 2048
+            self.headset_frequency= 2048
         elif HEADSET == 'Epoc':
-            path = 'C:/Users/Christopher/Marley/BCI/eeglab/SSVEP_Data/'
-            if corr_freq == 7.5:
-                fname = 'marley-10-15.03.18.13.39.41.edf'
+            path = 'Data/epoc/'
             if corr_freq == 6.66:
                 fname = 'marley-6.6-15.03.18.13.43.19.edf'
+            if corr_freq == 7.5:
+                fname = 'marley-7.5-15.03.18.13.39.41.edf'
             if corr_freq == 10:
-                fname = 'marley-10real-15.03.18.13.41.36.edf'
+                fname = 'marley-10-15.03.18.13.41.36.edf'
             if corr_freq == 'Baseline':
                 fname = 'marley-baseline-15.03.18.13.44.32.edf'
             raw = mne.io.read_raw_edf(path + fname)
             data, time = raw[:]
             sample = np.array(data[[9,10]])
-            self.fs = 128
+            self.headset_frequency = 128
         if filter_:
-            sample = self.filter_channels(sample, notch, highpass,bandpass, self.fs)
+            sample = self.filter_channels(sample, notch, highpass,bandpass, self.headset_frequency)
             '''
             if bandpass:
                 sample = self.bandpass_channels(sample, 1, 50, 5)
                 '''
-        sample = sample[:,self.fs*cutoff:-self.fs*cutoff]
+        sample = sample[:,self.headset_frequency*cutoff:-self.headset_frequency*cutoff]
         if limit is not None:
             sample = sample[:,:limit]
         if plot:    

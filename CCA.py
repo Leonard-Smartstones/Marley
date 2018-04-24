@@ -45,8 +45,14 @@ class CcaExtraction():
     '''def getResults(self, coordinates, length, target_freqs):
         return ((freq, self.getCorr(coordinates, self.getReferenceSignal(reference, length).T)) for freq, reference in zip(target_freqs, self.reference_signals))
         '''
-    def getWindowResults(self,sample_ep, frequencies, corr_freq, window_length, template=None, add=False):
-        self.getReferenceSignals(window_length, frequencies)
+    def getWindowResults(self,sample_ep, frequencies, corr_freq,template=None, add=False):
+        self.getReferenceSignals(sample_ep.shape[-1], frequencies)
+        ten = self.reference_signals[1,0]
+        '''for sig in self.reference_signals[:,0]:
+            sig += ten/2
+        ten = self.reference_signals[1,1]
+        for sig in self.reference_signals[:,1]:
+            sig += ten/2'''
         if add:
             self.reference_signals = np.concatenate(
                                                     (np.sum(self.reference_signals[:,::2], axis=1,keepdims=True), 
@@ -63,7 +69,6 @@ class CcaExtraction():
             all_results.append(results)
             predictions[np.argmax(results)] += 1
             pred = frequencies[np.argmax(results)]
-            #print(pred)
             if (pred == corr_freq):
                 right +=1
             else:
