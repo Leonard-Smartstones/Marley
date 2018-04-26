@@ -143,8 +143,9 @@ notch = 1
 bandpass=1
 plot_flag = 1
 trial = 7
-#corr_frequencies = [7.5,10, 12]
+#corr_frequencies = [7,10, 12]
 #corr_frequencies = [6.66, 7.5, 10]
+#corr_frequencies = [7.5, 8.57, 10]
 corr_frequencies = [8,10,12]
 frequencies = corr_frequencies
 window_lengths = [4]
@@ -153,14 +154,17 @@ pred_interval = 0.5
 
 
 fs = fs_dict[HEADSET]
-classifier = Benchmark(fs)
+classifier = CcaExtraction(fs)
 pred_interval = int(fs * pred_interval)
 
 # Load data from files
 data = {}
 fio = FileReader()
-baseline = fio.get_data(HEADSET, filter_, cutoff=1, notch=notch, highpass=highpass,bandpass=bandpass, corr_freq='Baseline', trial=trial, session=1)
-data['Baseline'] = baseline
+try:
+    baseline = fio.get_data(HEADSET, filter_, cutoff=1, notch=notch, highpass=highpass,bandpass=bandpass, corr_freq='Baseline', trial=trial, session=1)
+    data['Baseline'] = baseline
+except:
+    pass
 for corr_freq in corr_frequencies:
     sample = fio.get_data(HEADSET, filter_, cutoff=1, limit=recording_length*fs,notch=notch, highpass=highpass, bandpass=bandpass,corr_freq=corr_freq,trial=trial, session=1)
     data[corr_freq] = sample

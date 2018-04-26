@@ -42,96 +42,99 @@ class FileReader():
         
     def get_filename(self, case, trial, session=1):
         path = 'C:/Users/Christopher/Marley/BCI/OpenBCI_GUI/OpenBCI_GUI/SavedData/'
-        path2 = 'C:/Users/Christopher/Marley/OpenBCI/OpenBCI_GUI/SavedData/'
-        if trial == 3:
-            if case == 6.66:
-                return path2 + 'OpenBCI-RAW-2018-03-14_13-32-02.txt' # 6.6 attempt 3 light
-            elif case == 7.5:
-                return path2 + 'OpenBCI-RAW-2018-03-14_13-36-36.txt' #7.5 attempt 3 light
-            elif case == 8.57:
-                return path2 + 'OpenBCI-RAW-2018-03-14_13-44-46.txt' # 8.57 attempt 3 light
-            elif case == 10:
-                return path2 + 'OpenBCI-RAW-2018-03-14_13-49-40.txt'
-                #return path2 + 'OpenBCI-RAW-2018-03-14_13-38-03.txt' # 10 attempt 3 light
-            elif case == 'Baseline':
-                return path2 + 'OpenBCI-RAW-2018-03-14_13-43-09.txt' # Baseline attempt 3 light
-        if trial == 2:
-            if case == 6.66:
-                return path + 'OpenBCI-RAW-2018-03-08_21-38-54.txt' #6.6 Marley
-            elif case == 7.52:
-                return path2 + 'OpenBCI-RAW-2018-03-11_22-46-13.txt' # 7.5 attempt 2 dark
-            elif case == 7.5:
-                return path2 + 'OpenBCI-RAW-2018-03-11_22-54-19.txt' # 7.5 attempt 2 light
-            elif case == 8.57:
-                return path + 'OpenBCI-RAW-2018-03-09_17-12-40.txt' 
-            elif case == 10:
-                return path2 + 'OpenBCI-RAW-2018-03-11_22-55-18.txt' # 10 light
-            elif case == 'Baseline':
-                return 'C:/Users/Christopher/Marley/OpenBCI/OpenBCI_GUI/SavedData/OpenBCI-RAW-2018-03-12_11-37-33.txt'
-        if trial == 4:
+        if trial == 1:
+            path = 'Data/openbci/trial_1/'
             if case == 7.5:
-                return path + 'OpenBCI-RAW-2018-03-27_12-20-11.txt' #7.5 again
+                return path + 'OpenBCI-RAW-2018-03-11_22-46-13.txt' # 7.5 attempt 2 dark
+            if case == 7.5:
+                return path + 'OpenBCI-RAW-2018-03-11_22-54-19.txt' # 7.5 attempt 2 light
+            if case == 8.57:
+                return path + 'OpenBCI-RAW-2018-03-11_22-41-42.txt' # 8.57 attempt 2 light
+            if case == 10:
+                return path + 'OpenBCI-RAW-2018-03-11_22-55-18.txt' # 10 attempt 2 light
+        if trial == 2:
+            path = 'Data/openbci/trial_2/'
+            if case == 6.66:
+                return path + 'OpenBCI-RAW-2018-03-14_13-32-02.txt' # 6.6 attempt 3 light
+            if case == 7.5:
+                return path + 'OpenBCI-RAW-2018-03-14_13-36-36.txt' #7.5 attempt 3 light
+            if case == 8.57:
+                return path + 'OpenBCI-RAW-2018-03-14_13-44-46.txt' # 8.57 attempt 3 light
+            if case == 10:
+                return path + 'OpenBCI-RAW-2018-03-14_13-49-40.txt' # 10 attempt 3 light
+            if case == 10:
+                return path + 'OpenBCI-RAW-2018-03-14_13-38-03.txt' # 10 attempt 3 light
+            if case == 'Baseline':
+                return path + 'OpenBCI-RAW-2018-03-14_13-43-09.txt' # Baseline attempt 3 light
+        if trial == 3:
+            path = 'Data/openbci/trial_3/'
+            if case == 7:
+                return path + 'OpenBCI-RAW-2018-03-27_12-20-11.txt' #7
             if case == 12:
                 return path + 'OpenBCI-RAW-2018-03-27_12-29-34.txt' #12
             if case == 10:
                 return path + 'OpenBCI-RAW-2018-03-27_12-31-31.txt' #10
-        if trial == 5: # Marley, gold cup electrodes, april 2
+        if trial == 4: # Marley, gold cup electrodes, april 2
+            path = 'Data/openbci/trial_4/'
             if case == 7:
                 return path + 'OpenBCI-RAW-2018-04-02_23-08-40.txt'
-            if case == 7.52:
-                return path + 'OpenBCI-RAW-2018-04-02_23-04-13.txt'
-            if case == 7.51:
-                return path + 'OpenBCI-RAW-2018-04-02_22-48-59.txt'
             if case == 7.5:
                 return path + 'OpenBCI-RAW-2018-04-02_22-42-44.txt'
+            if case == 7.5:
+                return path + 'OpenBCI-RAW-2018-04-02_22-48-59.txt'
+            if case == 7.5:
+                return path + 'OpenBCI-RAW-2018-04-02_23-04-13.txt'
             if case == 10:
                 return path + 'OpenBCI-RAW-2018-04-02_22-41-33.txt'
             if case == 8.57:
                 return path + 'OpenBCI-RAW-2018-04-02_22-45-57.txt'
-            if case == 12.1:
-                return path + 'OpenBCI-RAW-2018-04-02_23-11-48.txt'
             if case == 12:
                 return path + 'OpenBCI-RAW-2018-04-02_22-47-06.txt'
+            if case == 12:
+                return path + 'OpenBCI-RAW-2018-04-02_23-11-48.txt'
             if case == 'Baseline':
                 return path + 'OpenBCI-RAW-2018-04-02_22-40-21.txt'
-            if case == 'baseline':
+            if case == 'Baseline':
                 return path + 'OpenBCI-RAW-2018-04-02_22-44-29.txt'
-        if trial == 6: #Marley gold cup electrodes april 8
-            if session == 2: # all channels on
-                if case == 'BaselineEnd':
-                    return path + 'OpenBCI-RAW-2018-04-08_13-03-36.txt'
-                if case == 10:
-                    return path + 'OpenBCI-RAW-2018-04-08_13-01-43.txt'
-                if case == 12:
-                    return path + 'OpenBCI-RAW-2018-04-08_12-59-14.txt'
-                if case == 8:
-                    return path + 'OpenBCI-RAW-2018-04-08_12-56-05.txt'
-                if case == 'Baseline':
-                    return path + 'OpenBCI-RAW-2018-04-08_12-52-20.txt'
-                if case == 'ec':
-                    return path + 'OpenBCI-RAW-2018-04-08_13-37-53.txt'
-                if case == 'BaselineS':
-                    return path + 'OpenBCI-RAW-2018-04-08_13-58-00.txt'
-            else: # turn off channels
-                if case == 'Baseline':
-                    return path + 'OpenBCI-RAW-2018-04-08_12-51-06.txt'
-                if case == 'BaselineEnd':
-                    return path + 'OpenBCI-RAW-2018-04-08_13-02-35.txt' #baseline taken at the end
-                if case == 8:
-                    return path + 'OpenBCI-RAW-2018-04-08_12-54-41.txt'
-                if case == 12.1:
-                    return path + 'OpenBCI-RAW-2018-04-08_12-56-55.txt'
-                if case == 12:
-                    return path + 'OpenBCI-RAW-2018-04-08_14-28-37.txt'
-                if case == 10:
-                    return path + 'OpenBCI-RAW-2018-04-08_13-00-15.txt'
-                if case== 'ec':
-                    return path + 'OpenBCI-RAW-2018-04-08_13-38-42.txt'
-                if case== 'BaselineS':
-                    return path + 'OpenBCI-RAW-2018-04-08_13-45-47.txt' #separate baseline
-                if case =='BaselineS2':
-                    return path + 'OpenBCI-RAW-2018-04-08_14-02-30.txt'
-        if trial == 7:  #Wenya dry electrodes 
+        if trial == 5: # Marley gold cup electrodes april 8, all channels except for O1 turned off
+            path = 'Data/openbci/trial_5/'
+            if case == 'Baseline':
+                return path + 'OpenBCI-RAW-2018-04-08_12-51-06.txt'
+            if case == 'BaselineEnd':
+                return path + 'OpenBCI-RAW-2018-04-08_13-02-35.txt' #baseline taken at the end
+            if case == 8:
+                return path + 'OpenBCI-RAW-2018-04-08_12-54-41.txt'
+            if case == 12:
+                return path + 'OpenBCI-RAW-2018-04-08_12-56-55.txt'
+            if case == 12:
+                return path + 'OpenBCI-RAW-2018-04-08_14-28-37.txt'
+            if case == 10:
+                return path + 'OpenBCI-RAW-2018-04-08_13-00-15.txt'
+            if case== 'ec':
+                return path + 'OpenBCI-RAW-2018-04-08_13-38-42.txt' # eyes closed
+            if case== 'BaselineS':
+                return path + 'OpenBCI-RAW-2018-04-08_13-45-47.txt' #separate baseline
+            if case =='BaselineS2':
+                return path + 'OpenBCI-RAW-2018-04-08_14-02-30.txt'
+        if trial == 6: # Marley gold cup electrodes april 8
+            path = 'Data/openbci/trial_6/'
+            if case == 'Baseline':
+                return path + 'OpenBCI-RAW-2018-04-08_13-02-35.txt'
+            if case == 'BaselineEnd':
+                return path + 'OpenBCI-RAW-2018-04-08_13-03-36.txt'
+            if case == 10:
+                return path + 'OpenBCI-RAW-2018-04-08_13-01-43.txt'
+            if case == 12:
+                return path + 'OpenBCI-RAW-2018-04-08_12-59-14.txt'
+            if case == 8:
+                return path + 'OpenBCI-RAW-2018-04-08_12-56-05.txt'
+            if case == 'Baseline':
+                return path + 'OpenBCI-RAW-2018-04-08_12-52-20.txt'
+            if case == 'ec':
+                return path + 'OpenBCI-RAW-2018-04-08_13-37-53.txt' # eyes closed
+            if case == 'BaselineS':
+                return path + 'OpenBCI-RAW-2018-04-08_13-58-00.txt'
+        if trial == 7:  # Wenya dry electrodes 
             path = 'Data/openbci/wenya_trial/'
             if case == 'Baseline':
                 return path + 'OpenBCI-RAW-2018-04-17_17-11-59.txt'
@@ -146,25 +149,33 @@ class FileReader():
             if case == 'BaselineEnd':
                 return path + 'OpenBCI-RAW-2018-04-17_17-21-25.txt'
         if trial == 8:
+            path = 'Data/openbci/wenya_trial/'
             if case == 'Baseline':
                 return path + 'OpenBCI-RAW-2018-04-17_17-43-51.txt'
             if case == 12:
                 return path + 'OpenBCI-RAW-2018-04-17_17-41-31.txt'
-                #return path + 'OpenBCI-RAW-2018-04-17_17-42-28.txt'
+            if case == 12:
+                return path + 'OpenBCI-RAW-2018-04-17_17-42-28.txt'
         if trial == 9:
             if case == 'Baseline':
+            path = 'Data/openbci/wenya_trial/'
                 return path + 'OpenBCI-RAW-2018-04-17_20-58-19.txt' #baseline
             if case == 12:
                 return path + 'OpenBCI-RAW-2018-04-17_20-59-46.txt'
-                #return path + 'OpenBCI-RAW-2018-04-17_21-01-10.txt'
+            if case == 12:
+                return path + 'OpenBCI-RAW-2018-04-17_21-01-10.txt'
+        '''
+        if case == 6.66:
+            return path + 'OpenBCI-RAW-2018-03-08_21-38-54.txt' #6.6 Marley
+        elif case == 8.57:
+            return path + 'OpenBCI-RAW-2018-03-09_17-12-40.txt' 
         elif case == 7.51:
             return path + 'OpenBCI-RAW-2018-03-08_22-20-12.txt' #7.5 Marley
         elif case == 3:
             return path + 'OpenBCI-RAW-2018-03-09_10-25-54.txt' #7.5 Marley
-        elif case == 8.572:
-            return path2 + 'OpenBCI-RAW-2018-03-11_22-41-42.txt'
-        elif case == 'Baseline':
-            return 'C:/Users/Christopher/Marley/OpenBCI/OpenBCI_GUI/SavedData/OpenBCI-RAW-2018-03-12_11-37-33.txt'
+        #elif case == 'Baseline':
+            #return 'C:/Users/Christopher/Marley/OpenBCI/OpenBCI_GUI/SavedData/OpenBCI-RAW-2018-03-12_11-37-33.txt'
+        '''
         else:
             print('File not found')
             
