@@ -1,0 +1,39 @@
+StartDate (first EEG timestamp): 1523308674769
+Device class: Enobio8
+Device MAC: 00:07:80:64:EA:FB
+NIC version: v1.2.12
+Operative system: Windows
+Firmware version: 922
+Line filter status: OFF
+Additional channel status: OFF
+
+Total number of channels: 8
+Number of EEG channels: 8
+Number of records of EEG: 16436
+Number of packets lost: 0(0.00%)
+EEG sampling rate: 500 Samples/second
+EEG units: nV
+EEG montage:
+	Channel 1: Ch1
+	Channel 2: Ch2
+	Channel 3: Ch3
+	Channel 4: Ch4
+	Channel 5: Ch5
+	Channel 6: Ch6
+	Channel 7: Ch7
+	Channel 8: Ch8
+
+Trigger information:
+	Code	Description
+	1	
+	2	
+	3	
+	4	
+	5	
+	6	
+	7	
+	8	
+	9	
+
+User notes:
+Baseline

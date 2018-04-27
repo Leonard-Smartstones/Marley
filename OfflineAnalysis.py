@@ -142,15 +142,16 @@ highpass = 0
 notch = 1
 bandpass=1
 plot_flag = 1
-trial = 7
+trial = 10
 #corr_frequencies = [7,10, 12]
-#corr_frequencies = [6.66, 7.5, 10]
+corr_frequencies = [6.66, 7.5, 10]
 #corr_frequencies = [7.5, 8.57, 10]
-corr_frequencies = [8,10,12]
+#corr_frequencies = [8,10,12]
+corr_frequencies = [7, 8, 9]
 frequencies = corr_frequencies
-window_lengths = [4]
-recording_length = 30
-pred_interval = 0.5
+window_lengths = [4] # window lengths in seconds
+recording_length = 30 # 
+pred_interval = 0.5 # when to make a prediction in seconds
 
 
 fs = fs_dict[HEADSET]

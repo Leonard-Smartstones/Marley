@@ -40,7 +40,7 @@ class FileReader():
             ndata.append(y)
         return np.array(ndata)
         
-    def get_filename(self, case, trial, session=1):
+    def get_openbci_filename(self, case, trial, session=1):
         path = 'C:/Users/Christopher/Marley/BCI/OpenBCI_GUI/OpenBCI_GUI/SavedData/'
         if trial == 1:
             path = 'Data/openbci/trial_1/'
@@ -157,14 +157,29 @@ class FileReader():
             if case == 12:
                 return path + 'OpenBCI-RAW-2018-04-17_17-42-28.txt'
         if trial == 9:
-            if case == 'Baseline':
             path = 'Data/openbci/wenya_trial/'
+            if case == 'Baseline':
                 return path + 'OpenBCI-RAW-2018-04-17_20-58-19.txt' #baseline
             if case == 12:
                 return path + 'OpenBCI-RAW-2018-04-17_20-59-46.txt'
             if case == 12:
                 return path + 'OpenBCI-RAW-2018-04-17_21-01-10.txt'
-        '''
+        if trial == 10:
+            path = 'Data/openbci/trial_10/'
+            if case == 'Baseline':
+                return path + 'OpenBCI-RAW-2018-04-26_14-37-23.txt'
+            if case == 7:
+                return path + 'OpenBCI-RAW-2018-04-26_14-45-33.txt'
+                #return path + 'OpenBCI-RAW-2018-04-26_14-38-32.txt'
+            if case == 8:
+                return path + 'OpenBCI-RAW-2018-04-26_14-39-41.txt'
+                #return path + 'OpenBCI-RAW-2018-04-26_14-33-35.txt'
+            if case == 9:
+                return path + 'OpenBCI-RAW-2018-04-26_14-36-08.txt'
+
+        else:
+            print('File not found')
+            '''
         if case == 6.66:
             return path + 'OpenBCI-RAW-2018-03-08_21-38-54.txt' #6.6 Marley
         elif case == 8.57:
@@ -176,8 +191,6 @@ class FileReader():
         #elif case == 'Baseline':
             #return 'C:/Users/Christopher/Marley/OpenBCI/OpenBCI_GUI/SavedData/OpenBCI-RAW-2018-03-12_11-37-33.txt'
         '''
-        else:
-            print('File not found')
             
     def get_enobio_fname(self, case, trial=2,session=1):
         if trial ==1:
@@ -278,7 +291,7 @@ class FileReader():
             sample = np.array(data[[14,15]])
         elif HEADSET == 'openbci':
             self.headset_frequency = 250
-            fname = self.get_filename(corr_freq, trial, session=session)
+            fname = self.get_openbci_filename(corr_freq, trial, session=session)
                 
             sample = np.loadtxt(fname,
                       delimiter=',',
